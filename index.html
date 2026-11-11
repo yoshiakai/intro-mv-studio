@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自己紹介MV プロンプトジェネレーター</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans p-6">
+    <div class="max-w-5xl mx-auto bg-white p-8 rounded-xl shadow-lg">
+        <h1 class="text-3xl font-bold mb-6 text-indigo-600 border-b pb-4">自己紹介MV プロンプトジェネレーター</h1>
+        <p class="mb-6 text-sm text-gray-600">入力した情報をもとに、音楽生成AIと映像生成AI向けのプロンプトを一括作成します。項目を多く埋めるほど、歌詞の内容が充実します。</p>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- 左カラム：自己紹介情報 -->
+            <div class="space-y-4">
+                <h2 class="text-xl font-semibold border-l-4 border-indigo-500 pl-2">1. 自己紹介要素 (すべて任意)</h2>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">名前（フルネーム等）</label>
+                        <input type="text" id="fullName" class="w-full border-gray-300 rounded-md p-2 border focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">呼ばれ方・ニックネーム</label>
+                        <input type="text" id="nickname" class="w-full border-gray-300 rounded-md p-2 border focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-1">出身地・ゆかりの地・現在の活動拠点</label>
+                    <input type="text" id="location" class="w-full border-gray-300 rounded-md p-2 border" placeholder="例: 北海道生まれ、現在は東京の大学でデザインを勉強中">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-1">趣味・特技・休日の過ごし方</label>
+                    <textarea id="hobbies" rows="2" class="w-full border-gray-300 rounded-md p-2 border" placeholder="例: カフェ巡り、友人とオンラインゲーム、写真を撮ること"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-1">好きなもの（食べ物、映画、言葉など）</label>
+                    <input type="text" id="favorites" class="w-full border-gray-300 rounded-md p-2 border" placeholder="例: オムライス、SF映画、「なんとかなる」">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-1">印象に残っているエピソード・失敗談</label>
+                    <textarea id="episode" rows="2" class="w-full border-gray-300 rounded-md p-2 border" placeholder="例: 文化祭で徹夜で準備したこと、初めての一人旅で道に迷ったこと"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-1">将来の夢・目標・大切にしている価値観</label>
+                    <textarea id="goals" rows="2" class="w-full border-gray-300 rounded-md p-2 border" placeholder="例: 誰かを笑顔にできる仕事をしたい、常に新しいことに挑戦する"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-1">その他の自由記述（歌詞に入れたいこと）</label>
+                    <textarea id="freeText" rows="2" class="w-full border-gray-300 rounded-md p-2 border" placeholder="例: 犬を飼っていて名前は「ポチ」、最近ギターを練習し始めた"></textarea>
+                </div>
+            </div>
+
+            <!-- 右カラム：スタイルと設定 -->
+            <div class="space-y-5">
+                <h2 class="text-xl font-semibold border-l-4 border-pink-500 pl-2">2. 音楽＆映像設定</h2>
+                
+                <!-- 対象AI選択 -->
+                <div class="bg-gray-50 p-4 rounded-md border border-gray-200">
+                    <label class="block text-sm font-bold mb-3 text-gray-700">使用する音楽生成AI</label>
+                    <div class="flex flex-col gap-3">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="ai_choice" value="suno" class="mr-2 w-4 h-4 text-indigo-600 focus:ring-indigo-500" checked>
+                            <span class="text-sm font-medium">Suno (標準の歌詞生成)</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="ai_choice" value="treblo" class="mr-2 w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                            <span class="text-sm font-medium">Treblo (ひらがな・発音調整用の歌詞を追加)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 音楽スタイル（複数選択＋自由記述） -->
+                <div>
+                    <label class="block text-sm font-medium mb-2">曲のジャンル (複数選択可)</label>
+                    <div class="grid grid-cols-3 gap-2 text-sm" id="musicStyles">
+                        <label><input type="checkbox" value="J-POP" class="mr-1"> J-POP</label>
+                        <label><input type="checkbox" value="アニソン" class="mr-1"> アニソン</label>
+                        <label><input type="checkbox" value="ボカロ風" class="mr-1"> ボカロ風</label>
+                        <label><input type="checkbox" value="City Pop" class="mr-1"> City Pop</label>
+                        <label><input type="checkbox" value="Rock" class="mr-1"> Rock</label>
+                        <label><input type="checkbox" value="Hip-Hop" class="mr-1"> Hip-Hop</label>
+                        <label><input type="checkbox" value="Lo-Fi" class="mr-1"> Lo-Fi</label>
+                        <label><input type="checkbox" value="EDM" class="mr-1"> EDM</label>
+                        <label><input type="checkbox" value="R&B" class="mr-1"> R&B</label>
+                        <label><input type="checkbox" value="アコースティック" class="mr-1"> アコースティック</label>
+                        <label><input type="checkbox" value="ジャズ" class="mr-1"> ジャズ</label>
+                        <label><input type="checkbox" value="K-POP" class="mr-1"> K-POP</label>
+                    </div>
+                    <div class="mt-3">
+                        <label class="block text-xs text-gray-600 mb-1">その他ジャンル・自由記述</label>
+                        <input type="text" id="freeGenre" class="w-full border-gray-300 rounded-md p-2 border text-sm" placeholder="例: メタル、ボサノバ、和風インスト、ミュージカル風など">
+                    </div>
+                </div>
+
+                <!-- テンポ・尺 -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">曲のテンポ</label>
+                        <select id="tempo" class="w-full border-gray-300 rounded-md p-2 border text-sm">
+                            <option value="アップテンポ（元気・明るい）">アップテンポ</option>
+                            <option value="ミドルテンポ（エモい・ドラマチック）">ミドルテンポ</option>
+                            <option value="スローテンポ（落ち着いた・チル）">スローテンポ</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">曲の長さ（目安）</label>
+                        <select id="duration" class="w-full border-gray-300 rounded-md p-2 border text-sm">
+                            <option value="約1分（ショートサイズ、TikTok/Shorts向け）">1分（ショート）</option>
+                            <option value="約2分（スタンダード）">2分（標準）</option>
+                            <option value="約3分（フルサイズ）">3分（フル）</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 映像スタイル（単一選択） -->
+                <div>
+                    <label class="block text-sm font-medium mb-1 mt-2">映像のビジュアルスタイル</label>
+                    <select id="videoStyle" class="w-full border-gray-300 rounded-md p-2 border">
+                        <option value="高品質な日本のアニメーションスタイル、新海誠風">アニメ調（シネマティック）</option>
+                        <option value="実写映画のような高品質なフォトリアル、被写界深度">実写調（フォトリアル）</option>
+                        <option value="サイバーパンク、ネオンライト、未来都市">サイバーパンク・SF調</option>
+                        <option value="水彩画タッチ、絵本のような温かみのあるイラスト">水彩画・絵本調</option>
+                        <option value="3D CG、ピクサー風のポップなアニメーション">3D CG（ポップ）</option>
+                        <option value="クレイアニメ風、ストップモーション">クレイアニメ・ストップモーション調</option>
+                        <option value="レトロなピクセルアート、8bitドット絵">ドット絵（ピクセルアート）</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-10 text-center">
+            <button onclick="generatePrompt()" class="bg-indigo-600 text-white px-10 py-3 rounded-full font-bold hover:bg-indigo-700 transition duration-300 shadow-md">
+                マスタープロンプトを生成する
+            </button>
+        </div>
+
+        <!-- 出力エリア -->
+        <div class="mt-8 hidden" id="outputArea">
+            <h2 class="text-xl font-semibold mb-2 flex justify-between items-center">
+                3. 生成されたプロンプト (LLMへコピペ用)
+                <button onclick="copyToClipboard()" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded">コピーする</button>
+            </h2>
+            <textarea id="resultPrompt" rows="20" class="w-full border-gray-300 rounded-md p-4 border bg-gray-50 text-sm font-mono leading-relaxed" readonly></textarea>
+            <p class="text-xs text-gray-500 mt-2">※このテキストをChatGPT、Claude、またはGeminiに貼り付けて実行してください。</p>
+        </div>
+    </div>
+
+    <script>
+        function generatePrompt() {
+            const fullName = document.getElementById('fullName').value || "特になし";
+            const nickname = document.getElementById('nickname').value || "特になし";
+            const location = document.getElementById('location').value || "特になし";
+            const hobbies = document.getElementById('hobbies').value || "特になし";
+            const favorites = document.getElementById('favorites').value || "特になし";
+            const episode = document.getElementById('episode').value || "特になし";
+            const goals = document.getElementById('goals').value || "特になし";
+            const freeText = document.getElementById('freeText').value || "特になし";
+            
+            const aiChoice = document.querySelector('input[name="ai_choice"]:checked').value;
+            
+            // 音楽スタイルの取得（チェックボックス＋自由記述）
+            const musicCheckboxes = document.querySelectorAll('#musicStyles input:checked');
+            let musicStylesArr = Array.from(musicCheckboxes).map(cb => cb.value);
+            const freeGenre = document.getElementById('freeGenre').value.trim();
+            if (freeGenre) {
+                musicStylesArr.push(freeGenre);
+            }
+            const musicStyles = musicStylesArr.length > 0 ? musicStylesArr.join(', ') : "J-POP";
+            
+            const videoStyle = document.getElementById('videoStyle').value;
+            const tempo = document.getElementById('tempo').value;
+            const duration = document.getElementById('duration').value;
+            
+            const aiName = aiChoice === 'suno' ? 'Suno' : 'Treblo';
+
+            let lyricsInstruction = '';
+            let videoPromptStep = '';
+
+            if (aiChoice === 'suno') {
+                lyricsInstruction = `### 2. 歌詞
+提供された自己紹介情報を最大限に活用し、指定の長さ（${duration}）に合う歌詞を書いてください。
+漢字や表現は通常の日本語表記とし、映像の字幕としても読めるようにしてください。
+[Verse 1], [Chorus], [Outro] などのセクションタグを英語で適切に配置してください。`;
+                videoPromptStep = "### 3. MVカット割り＆画像/動画生成AI用プロンプト";
+            } else {
+                lyricsInstruction = `### 2. 歌詞（読み物用・字幕用）
+提供された自己紹介情報を最大限に活用し、指定の長さ（${duration}）に合う歌詞を書いてください。
+漢字や表現は通常の日本語表記とし、映像の字幕や配布用のテキストとして美しく読めるようにしてください。
+
+### 3. 歌詞（Treblo貼り付け用）
+Trebloは漢字の読み間違いや、英語と日本語が混ざった際の発音の崩れが起きやすいAIです。そのため、「2. 歌詞」を以下のルールでTreblo入力用に変換してください。
+・難しい漢字や特殊な読み方をする名詞は「ひらがな」または「カタカナ」に開く。
+・英語部分は自然な日本語の発音になるようカタカナで表記する。（例: "Future" -> "フューチャー"）
+・AIがリズムを取りやすいよう、言葉の区切りに適切なスペース（空白）を適度に入れる。
+・[Verse], [Chorus], [Outro] などのセクションタグを必ず英語で記載する。`;
+                videoPromptStep = "### 4. MVカット割り＆画像/動画生成AI用プロンプト";
+            }
+
+            const promptText = `あなたはプロの音楽プロデューサー兼MVディレクターです。
+以下の【自己紹介情報】と【希望スタイル】をもとに、音楽生成AI「${aiName}」用の入力データと、映像生成AI（Luma/Runway等）用のカット割りプロンプトを作成してください。
+
+---
+【自己紹介情報】
+・名前: ${fullName}
+・呼ばれ方/ニックネーム: ${nickname}
+・出身地/ゆかりの地: ${location}
+・趣味/特技/休日の過ごし方: ${hobbies}
+・好きなもの: ${favorites}
+・印象的なエピソード: ${episode}
+・目標/大切にしている価値観: ${goals}
+・その他（自由記述）: ${freeText}
+
+【希望スタイル】
+・音楽ジャンル: ${musicStyles}
+・テンポ/雰囲気: ${tempo}
+・曲の長さ目安: ${duration}
+・映像ビジュアル: ${videoStyle}
+---
+
+以下のセクションをMarkdown形式で出力してください。
+
+### 1. ${aiName}用スタイルタグ (Style Tags)
+曲のスタイルを指定するためのカンマ区切りの英単語タグを10個程度提案してください。
+例: J-POP, ${tempo.includes('アップ') ? 'upbeat, fast tempo' : 'mid tempo, emotional'}, female vocal, etc.
+
+${lyricsInstruction}
+
+${videoPromptStep}
+作成した歌詞の展開に合わせ、MV用のカット割りを提案してください。
+各カットについて、以下の項目を含めてください。
+・該当する歌詞のフレーズ
+・シーンの情景説明（日本語）
+・画像/動画生成AI用の英語プロンプト（指定された映像ビジュアル「${videoStyle}」の英訳を含め、動画AI向けに Pan right, Zoom in などのカメラワークの指示も入れること）`;
+
+            document.getElementById('resultPrompt').value = promptText;
+            document.getElementById('outputArea').classList.remove('hidden');
+        }
+
+        function copyToClipboard() {
+            const resultText = document.getElementById('resultPrompt');
+            resultText.select();
+            document.execCommand('copy');
+            alert('クリップボードにコピーしました！ChatGPTやGeminiに貼り付けて実行してください。');
+        }
+    </script>
+</body>
+</html>
